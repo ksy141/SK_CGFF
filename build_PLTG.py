@@ -1,4 +1,3 @@
-import SMDAnalysis as smda
 import MDAnalysis as mda
 import numpy as np
 
