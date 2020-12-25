@@ -1,19 +1,19 @@
 # SK_CGFF
 Siyoung Kim's CG model
 
-Run in gromacs via
+1. Run in gromacs via
 ``` bash
 gmx grompp -f step7.mdp -c yourstructure.gro -o step7.tpr
 gmx mdrun -deffnm step7 -table toppar/table.xvg
 ```
 
-Make topol.top by yourself (Write how many PL and TG molecules are in your system.)
+2. Make topol.top by yourself (Write how many PL and TG molecules are in your system.)
 
 
-toppar/DOPC.itp and toppar/TRIO.itp describe PL and TG molecules, respectively, defining the atom types, bonds, and angles. (No need to modify.)
+3. toppar/DOPC.itp and toppar/TRIO.itp describe PL and TG molecules, respectively, defining the atom types, bonds, and angles. (No need to modify.)
 
 
-toppar/cg.itp defines the non-bonded potential for each pair.
+4. toppar/cg.itp defines the non-bonded potential for each pair.
 ``` bash
 cd toppar
 python make_potential.py
@@ -21,6 +21,9 @@ python make_potential.py
 will create cg.itp.
 
 
-The initial structures for a PL bilayer or PL+TG bilayer can be made with the attached scripts.
-python build_PL.py or python build_PLTG.py.
+5. The initial structures for a PL bilayer or PL+TG bilayer can be made with the attached scripts.
+``` bash
+python build_PL.py
+python build_PLTG.py
+```
 Requires the MDAnalysis package.
