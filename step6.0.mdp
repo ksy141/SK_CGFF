@@ -1,0 +1,14 @@
+integrator              = steep
+emtol                   = 1000.0
+nsteps                  = 5000
+nstlist                 = 10
+cutoff-scheme           = group
+rlist                   = 2.6
+vdwtype                 = user
+vdw-modifier            = Potential-Shift
+rvdw                    = 2.4
+;
+coulombtype             = user
+rcoulomb                = 0.0
+
+

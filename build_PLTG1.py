@@ -1,12 +1,11 @@
-import SMDAnalysis as smda
 import MDAnalysis as mda
 import numpy as np
 
 ### N = 3600 * 2; dN = 180 * 2
 ### N = 1600 * 2; dN = 80 * 2
-pbcz  = 200
-N     = 900 * 2
-dN    = 45 * 2
+pbcz  = 100
+N     = 64 * 2
+dN    = 1
 Nx    = int(np.sqrt(N/2))
 dx    = 8
 
@@ -14,10 +13,10 @@ sigma  = 5 #A
 PL_natoms = 11
 TG_natoms = 13
 
-n_atoms = (N-dN)*PL_natoms + dN*TG_natoms
-n_residues = N
-PL_resindex = np.repeat(np.arange(0, N-dN), PL_natoms)
-TG_resindex = np.repeat(np.arange(N-dN, N), TG_natoms)
+n_atoms = N*PL_natoms + dN*TG_natoms
+n_residues = N + dN
+PL_resindex = np.repeat(np.arange(0, N), PL_natoms)
+TG_resindex = np.repeat(np.arange(N, N+dN), TG_natoms)
 atom_resindex = np.append(PL_resindex, TG_resindex)
 
 u = mda.Universe.empty(n_atoms = n_atoms,
@@ -27,7 +26,7 @@ u = mda.Universe.empty(n_atoms = n_atoms,
 
 u.add_TopologyAttr('name', ['NC3','PO4','PGL',
                             'C21', 'C22', 'C23', 'C24',
-                            'C31', 'C32', 'C33', 'C34'] * (N-dN) +
+                            'C31', 'C32', 'C33', 'C34'] * N +
                            ['TGL',
                             'C11', 'C12', 'C13', 'C14',
                             'C21', 'C22', 'C23', 'C24',
@@ -36,17 +35,17 @@ u.add_TopologyAttr('name', ['NC3','PO4','PGL',
 
 u.add_TopologyAttr('type', ['NC3','PO4','PGL',
                             'CT1','CT1','CT2','CT2',
-                            'CT1','CT1','CT2','CT2'] * (N-dN) +
+                            'CT1','CT1','CT2','CT2'] * N +
                             ['TGL',
                              'CT1', 'CT2', 'CT2', 'CT2',
                              'CT1', 'CT2', 'CT2', 'CT2',
                              'CT1', 'CT2', 'CT2', 'CT2'] * dN)
 
-u.add_TopologyAttr('resname', ['DOPC'] * (N-dN) + ['TRIO'] * dN)
-u.add_TopologyAttr('resid', np.arange(1, N+1))
+u.add_TopologyAttr('resname', ['DOPC'] * N + ['TRIO'] * dN)
+u.add_TopologyAttr('resid', np.arange(1, N+dN+1))
 
 bonds = []
-for o in range(0, (N-dN)*11, 11):
+for o in range(0, N*11, 11):
     bonds.append([o+0, o+1])
     bonds.append([o+1, o+2])
     bonds.append([o+2, o+3])
@@ -58,7 +57,7 @@ for o in range(0, (N-dN)*11, 11):
     bonds.append([o+8, o+9])
     bonds.append([o+9, o+10])
 
-for o in range((N-dN)*11, (N-dN)*11 + dN*13, 13):
+for o in range(N*11, N*11 + dN*13, 13):
     bonds.append([o+0, o+1])
     bonds.append([o+0, o+5])
     bonds.append([o+0, o+9])
@@ -74,10 +73,7 @@ for o in range((N-dN)*11, (N-dN)*11 + dN*13, 13):
 
 u.add_TopologyAttr('bonds', [tuple(x) for x in bonds])
 
-TG_locs = np.arange(N/2, dtype=np.int)
-np.random.shuffle(TG_locs)
 
-TG_up_coords = []
 lx = dx/2
 lz = pbcz/2 - 65/2
 coordinates = []
@@ -85,11 +81,7 @@ for i in range(Nx):
     for j in range(Nx):
         x = lx + dx*i
         y = lx + dx*j
-
-        if (i*Nx + j) in TG_locs[:int(dN/2)]:
-            TG_up_coords.append([x, y])
-            continue
-
+        
         coordinates.append([x,y,lz])
         coordinates.append([x,y,lz+sigma])
         coordinates.append([x,y,lz+sigma*2])
@@ -103,19 +95,12 @@ for i in range(Nx):
         coordinates.append([x-0.5*sigma,y,lz+sigma*(5+0.866)])
 
 
-TG_locs = np.arange(N/2, dtype=np.int)
-np.random.shuffle(TG_locs)
-TG_dw_coords = []
 ux = dx/2
 uz = pbcz/2 + 65/2
 for i in range(Nx):
     for j in range(Nx):
         x = ux + dx*i
         y = ux + dx*j
-
-        if (i*Nx + j) in TG_locs[:int(dN/2)]:
-            TG_dw_coords.append([x, y])
-            continue
 
         coordinates.append([x,y,uz])
         coordinates.append([x,y,uz-sigma])
@@ -129,40 +114,25 @@ for i in range(Nx):
         coordinates.append([x-0.5*sigma,y,uz-sigma*(4+0.866)])
         coordinates.append([x-0.5*sigma,y,uz-sigma*(5+0.866)])
 
-for TG_coord in TG_up_coords:
-    x, y = TG_coord
-    coordinates.append([x,y,lz+sigma*2])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(2+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(3+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(4+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(5+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(2+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(3+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(4+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(5+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(2+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(3+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(4+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(5+0.8165)])
 
-for TG_coord in TG_dw_coords:
-    x, y = TG_coord
-    coordinates.append([x,y,uz-sigma*2])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,uz-sigma*(2+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,uz-sigma*(3+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,uz-sigma*(4+0.8165)])
-    coordinates.append([x-0.5*sigma,y-0.2887*sigma,uz-sigma*(5+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,uz-sigma*(2+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,uz-sigma*(3+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,uz-sigma*(4+0.8165)])
-    coordinates.append([x+0.5*sigma,y-0.2887*sigma,uz-sigma*(5+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,uz-sigma*(2+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,uz-sigma*(3+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,uz-sigma*(4+0.8165)])
-    coordinates.append([x+0.0*sigma,y+0.5774*sigma,uz-sigma*(5+0.8165)])
+x = ux + dx * Nx
+y = ux + dx * Nx
+coordinates.append([x,y,lz+sigma*2])
+coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(2+0.8165)])
+coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(3+0.8165)])
+coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(4+0.8165)])
+coordinates.append([x-0.5*sigma,y-0.2887*sigma,lz+sigma*(5+0.8165)])
+coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(2+0.8165)])
+coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(3+0.8165)])
+coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(4+0.8165)])
+coordinates.append([x+0.5*sigma,y-0.2887*sigma,lz+sigma*(5+0.8165)])
+coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(2+0.8165)])
+coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(3+0.8165)])
+coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(4+0.8165)])
+coordinates.append([x+0.0*sigma,y+0.5774*sigma,lz+sigma*(5+0.8165)])
 
 u.atoms.positions = coordinates
-u.dimensions = [dx*(Nx), dx*(Nx), pbcz, 90, 90, 90]
+u.dimensions = [dx*(Nx+1), dx*(Nx+1), pbcz, 90, 90, 90]
 u.atoms.write('step5.gro')
 
 with open('topol.top', 'w') as W:
@@ -178,4 +148,7 @@ My own CG system
 ; name    n_residues
   DOPC    %d
   TRIO    %d
-''' %(N-dN, dN))
+''' %(N, dN))
+
+
+

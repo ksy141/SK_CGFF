@@ -1,4 +1,3 @@
-import SMDAnalysis as smda
 import MDAnalysis as mda
 import numpy as np
 
@@ -86,7 +85,7 @@ for i in range(Nx):
         x = lx + dx*i
         y = lx + dx*j
 
-        if (i*Nx + j) in TG_locs[:int(dN/2)]:
+        if (i*Nx + j) in TG_locs[:int(dN/3)]:
             TG_up_coords.append([x, y])
             continue
 
@@ -113,7 +112,7 @@ for i in range(Nx):
         x = ux + dx*i
         y = ux + dx*j
 
-        if (i*Nx + j) in TG_locs[:int(dN/2)]:
+        if (i*Nx + j) in TG_locs[:int(2*dN/3)]:
             TG_dw_coords.append([x, y])
             continue
 
