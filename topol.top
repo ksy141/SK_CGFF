@@ -1,0 +1,12 @@
+#include "toppar/cg.itp"
+#include "toppar/DOPC.itp"
+#include "toppar/TRIO.itp"
+
+[ system ]
+; name
+Siyoung Kim's CG model
+
+[ molecules ]
+; name    n_residues
+  DOPC    XXX
+  TRIO    XXX

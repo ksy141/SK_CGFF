@@ -1,0 +1,49 @@
+[ moleculetype ]
+; molname  nrexcl
+  DOPC     1
+
+
+[ atoms ]
+; id  type   resnr   residu  atom  cgnr  charge
+  1   NC3    1       DOPC    NC3   1     0.0
+  2   PO4    1       DOPC    PO4   2     0.0
+  3   PGL    1       DOPC    PGL   3     0.0
+  4   CT1    1       DOPC    C21   4     0.0
+  5   CT1    1       DOPC    C22   5     0.0
+  6   CT2    1       DOPC    C23   6     0.0
+  7   CT2    1       DOPC    C24   7     0.0
+  8   CT1    1       DOPC    C31   8     0.0
+  9   CT1    1       DOPC    C32   9     0.0
+ 10   CT2    1       DOPC    C33  10     0.0
+ 11   CT2    1       DOPC    C34  11     0.0
+
+
+[ bonds ]
+;  i    j    func   b0 [nm]   kb [kj/mol/nm2]
+   1    2    1      0.5       2092
+   2    3    1      0.5       2092
+   3    4    1      0.5       2092
+   4    5    1      0.5       2092
+   5    6    1      0.5       2092
+   6    7    1      0.5       2092
+   3    8    1      0.5       2092
+   8    9    1      0.5       2092
+   9   10    1      0.5       2092
+  10   11    1      0.5       2092
+   
+
+[ angles ]
+;  i    j    k   func  angle   force.c.
+   1    2    3   2     180.0   0.5
+   2    3    4   2     120.0   0.5
+   2    3    8   2     120.0   0.5
+   4    3    8   2      60.0   0.5
+   3    4    5   2     120.0   0.5
+   4    5    6   2     180.0   0.5
+   5    6    7   2     180.0   0.5
+   3    8    9   2     120.0   0.5
+   8    9   10   2     180.0   0.5
+   9   10   11   2     180.0   0.5
+
+
+
