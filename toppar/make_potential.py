@@ -1,7 +1,7 @@
 import numpy as np
 
 ### Set PGL - TGL coefficient
-PT = 2.5
+PT = 1.0
 
 
 ### Make a Gaussian table
